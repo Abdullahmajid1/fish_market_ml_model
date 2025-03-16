@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fish Weight Prediction</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Fish Weight Prediction</h1>
+        <form id="predictionForm">
+            <!-- Species Dropdown -->
+            <label for="Species">Species:</label>
+            <select id="Species" name="Species" required>
+                <option value="0">Bream</option>
+                <option value="1">Perch</option>
+                <option value="2">Roach</option>
+                <option value="3">Pike</option>
+                <option value="4">Smelt</option>
+                <option value="5">Parkki</option>
+                <option value="6">Whitefish</option>
+            </select>
+
+            <!-- Length1 Input -->
+            <label for="Length1">Length1 (cm):</label>
+            <input type="number" step="0.1" id="Length1" name="Length1" required>
+
+            <!-- Length2 Input -->
+            <label for="Length2">Length2 (cm):</label>
+            <input type="number" step="0.1" id="Length2" name="Length2" required>
+
+            <!-- Length3 Input -->
+            <label for="Length3">Length3 (cm):</label>
+            <input type="number" step="0.1" id="Length3" name="Length3" required>
+
+            <!-- Height Input -->
+            <label for="Height">Height (cm):</label>
+            <input type="number" step="0.1" id="Height" name="Height" required>
+
+            <!-- Width Input -->
+            <label for="Width">Width (cm):</label>
+            <input type="number" step="0.1" id="Width" name="Width" required>
+
+            <!-- Submit Button -->
+            <button type="submit">Predict Weight</button>
+        </form>
+
+        <!-- Prediction Result -->
+        <h2 id="result"></h2>
+    </div>
+
+    <!-- JavaScript to Handle Form Submission -->
+    <script>
+        document.getElementById("predictionForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent form from refreshing the page
+
+            // Get input values
+            const data = {
+                Species: parseInt(document.getElementById("Species").value),
+                Length1: parseFloat(document.getElementById("Length1").value),
+                Length2: parseFloat(document.getElementById("Length2").value),
+                Length3: parseFloat(document.getElementById("Length3").value),
+                Height: parseFloat(document.getElementById("Height").value),
+                Width: parseFloat(document.getElementById("Width").value)
+            };
+
+            // Send POST request to Flask API
+            fetch("http://127.0.0.1:5000/predict", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Display the prediction result
+                document.getElementById("result").innerText = `Predicted Weight: ${data.prediction.toFixed(2)} grams`;
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                document.getElementById("result").innerText = "Error making prediction. Please try again.";
+            });
+        });
+    </script>
+</body>
+</html>
